@@ -41,7 +41,7 @@ pico_set_program_name(interrupt "interrupt")
 pico_set_program_version(interrupt "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(interrupt 0)
+pico_enable_stdio_uart(interrupt 1)
 pico_enable_stdio_usb(interrupt 1)
 
 pico_generate_pio_header(interrupt ${CMAKE_CURRENT_LIST_DIR}/interrupt.pio)
@@ -54,7 +54,7 @@ target_link_libraries(interrupt PRIVATE
         hardware_pio
         hardware_timer
         hardware_pwm
-	      hardware_adc
+	    hardware_adc
         pico_bootrom)
 
 # Add the standard include files to the build
@@ -64,7 +64,6 @@ target_include_directories(interrupt PRIVATE
 
 # Add any user requested libraries
 target_link_libraries(interrupt 
-        
         )
 
 pico_add_extra_outputs(interrupt)
