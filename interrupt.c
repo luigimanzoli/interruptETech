@@ -18,9 +18,9 @@
 #define OUT_PIN 7
 
 // Definição dos LEDs RGB
-#define RLED_PIN 17
-#define GLED_PIN 15
-#define BLED_PIN 16
+#define RLED_PIN 13
+#define GLED_PIN 11
+#define BLED_PIN 12
 
 // Definição dos botões
 #define BTNA_PIN 5
@@ -53,7 +53,6 @@ void get_led(bool R, bool G, bool B) {
     gpio_put(GLED_PIN, G);
     gpio_put(BLED_PIN, B);
 }
-
 
 //todos apagados
 double desenho_apagado[25] = {
@@ -170,23 +169,36 @@ void configurar_pio(PIO pio, uint *offset, uint *sm) {
 
 // Função principal
 int main() {
+    // Inicializa clock, stdio e configurações
+    stdio_init_all();
+    init_all();
+    inicializar_clock();
+
     PIO pio = pio0;
     uint offset, sm;
     uint32_t valor_led;
     double r = 0.0, b = 0.0, g = 0.0;
 
-    // Inicializa clock, stdio e configurações
-    stdio_init_all();
-    init_all();
-    inicializar_clock();
     configurar_pio(pio, &offset, &sm);
 
     printf("Sistema inicializado. Aguardando entrada...\n");
+
     desenho_verde(luz_total, valor_led, pio, sm, r, g ,b);
 
     while (true) {
         if (!gpio_get(BTNA_PIN)){
+            printf("Botão A on.\n");
             desenho_azul(luz_total, valor_led, pio, sm, r, g ,b);
+
+            sleep_ms(50);
+        }
+        else if(!gpio_get(BTNB_PIN)){
+            //get_led(1,0,0);
+            printf("Botão B on.\n");
+            gpio_put(RLED_PIN, 100);
+            desenho_verde(luz_total, valor_led, pio, sm, r, g ,b);
+
+            sleep_ms(50);
         }
         sleep_ms(5); // Atraso para evitar múltiplas leituras
     }
