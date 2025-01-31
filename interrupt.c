@@ -346,13 +346,11 @@ uint32_t valor_led;
 uint offset, sm;
 
 void gpio_irq_handler(uint gpio, uint32_t events){
-
     if (gpio == BTNA_PIN){
         contador++;
         print_digit(contador, pio, sm);
         printf("Contador = %i\n", contador);
         sleep_ms(50);
-
     } else if (gpio == BTNB_PIN){
         contador = contador - 1;
         print_digit(contador, pio, sm);
