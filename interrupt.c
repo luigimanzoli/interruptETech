@@ -27,6 +27,7 @@
 #define BTNB_PIN 6
 
 int contador = 0;
+static volatile uint32_t last_time = 0; 
 
 void init_all() {
     gpio_init(RLED_PIN);
@@ -55,6 +56,8 @@ void get_led(bool R, bool G, bool B) {
     gpio_put(GLED_PIN, G);
     gpio_put(BLED_PIN, B);
 }
+
+/*
 
 double digit0[25] = {
     0.0, 0.0, 0.0, 0.0, 0.0,
@@ -136,6 +139,8 @@ double digit9[25] = {
     0.0, 0.0, 0.0, 1.0, 0.0
 };
 
+*/
+
 // Matriz com todos os dígitos
 
 double digits[10][25] = {
@@ -172,7 +177,7 @@ double digits[10][25] = {
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0, 0.0
+    0.0, 0.0, 0.0, 1.0, 0.0
 },
 { // Digito 5
     0.0, 1.0, 1.0, 1.0, 0.0,
@@ -207,7 +212,7 @@ double digits[10][25] = {
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0, 0.0
+    0.0, 0.0, 0.0, 1.0, 0.0
 }
 
 };
@@ -312,7 +317,7 @@ void desenho_branco(double *desenho, uint32_t valor_led, PIO pio, uint sm, doubl
 }
 // Inicializa o sistema de clock
 void inicializar_clock() {
-    bool ok = set_sys_clock_khz(128000, false);
+    bool ok = set_sys_clock_khz(100000, false);
     if (ok) {
         printf("Clock set to %ld\n", clock_get_hz(clk_sys));
     } else {
@@ -333,7 +338,7 @@ void print_digit(int digit, PIO pio, uint sm){
     if (digit <= 9 && digit >= 0){
         for (int16_t i = 0; i < NUM_PIXELS; i++) {
             // Define a cor vermelha para cada LED
-            valor_led = matrix_rgb(0.0, digits[digit][24 - i], 0.0); // Apenas o valor vermelho está ativo
+            valor_led = matrix_rgb(0.0, 0.1*(digits[digit][24 - i]), 0.0); // Apenas o valor vermelho está ativo
             pio_sm_put_blocking(pio, sm, valor_led); // Envia o valor para o LED
         }
     } else {
@@ -346,16 +351,25 @@ uint32_t valor_led;
 uint offset, sm;
 
 void gpio_irq_handler(uint gpio, uint32_t events){
-    if (gpio == BTNA_PIN){
-        contador++;
-        print_digit(contador, pio, sm);
-        printf("Contador = %i\n", contador);
-        sleep_ms(50);
-    } else if (gpio == BTNB_PIN){
-        contador = contador - 1;
-        print_digit(contador, pio, sm);
-        printf("Contador = %i\n", contador);
-        sleep_ms(50);
+
+    uint32_t current_time = to_us_since_boot(get_absolute_time());
+        if (current_time - last_time > 200000){
+            last_time = current_time;
+            
+            if (gpio == BTNA_PIN){
+
+            contador++;
+            print_digit(contador, pio, sm);
+            printf("Contador = %i\n", contador);
+
+            }   
+            else if (gpio == BTNB_PIN){
+
+            contador = contador - 1;
+            print_digit(contador, pio, sm);
+            printf("Contador = %i\n", contador);
+
+            }
     }
 
 }
