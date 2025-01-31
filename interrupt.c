@@ -140,15 +140,15 @@ double digit9[25] = {
 
 double digits[10][25] = {
 { // Digito 0
-    0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0,
-    0.0, 0.0, 0.0, 0.0, 0.0
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
 },
 { // Digito 1
     0.0, 0.0, 1.0, 0.0, 0.0,
-    0.0, 1.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 1.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0
@@ -157,40 +157,40 @@ double digits[10][25] = {
     0.0, 0.0, 1.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0
 },
 { // Digito 3
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0
 },
 { // Digito 4
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0
 },
 { // Digito 5
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 1.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0
 },
 { // Digito 6
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0
 },
 { // Digito 7
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0, 0.0
@@ -206,8 +206,8 @@ double digits[10][25] = {
     0.0, 1.0, 1.0, 1.0, 0.0,
     0.0, 1.0, 0.0, 1.0, 0.0,
     0.0, 1.0, 1.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0, 0.0
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0
 }
 
 };
@@ -328,26 +328,33 @@ void configurar_pio(PIO pio, uint *offset, uint *sm) {
 }
 
 
-void print_digit(int digit, uint32_t valor_led, PIO pio, uint sm){
-    if (digit < 9){
+void print_digit(int digit, PIO pio, uint sm){
+
+    uint32_t valor_led;
+    if (digit <= 9 && digit >= 0){
         for (int16_t i = 0; i < NUM_PIXELS; i++) {
             // Define a cor vermelha para cada LED
             valor_led = matrix_rgb(0.0, digits[digit][24 - i], 0.0); // Apenas o valor vermelho está ativo
             pio_sm_put_blocking(pio, sm, valor_led); // Envia o valor para o LED
         }
-    } else{
+    } else {
         printf("Valor incompatível.\n");
     }
 }
 
 void gpio_irq_handler(uint gpio, uint32_t events){
-    //contador++;
-    //print_digit(contador);
 
-    gpio_put(RLED_PIN, !gpio_get(RLED_PIN));
+    PIO pio = pio0;
+    uint32_t valor_led;
+    uint offset, sm;
+    configurar_pio(pio, &offset, &sm);
+
+    contador++;
+    print_digit(contador, pio, sm);
+
+    //gpio_put(RLED_PIN, !gpio_get(RLED_PIN));
 
 }
-
 
 // Função principal
 int main() {
@@ -357,34 +364,32 @@ int main() {
     inicializar_clock();
 
     PIO pio = pio0;
-    uint offset, sm;
     uint32_t valor_led;
+    uint offset, sm;
     double r = 0.0, b = 0.0, g = 0.0;
 
     configurar_pio(pio, &offset, &sm);
 
     printf("Sistema inicializado. Aguardando entrada...\n");
 
-    gpio_set_irq_enabled_with_callback(BTNA_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+    //gpio_set_irq_enabled_with_callback(BTNA_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 
-    desenho_verde(luz_total, valor_led, pio, sm, r, g ,b);
+    print_digit(0, pio, sm);
+    gpio_put(RLED_PIN, 1);
+    sleep_ms(300);
+    gpio_put(RLED_PIN, 0);
+    
 
     while (true) {
         if (!gpio_get(BTNA_PIN)){
-            printf("Botão A on.\n");
-            desenho_azul(luz_total, valor_led, pio, sm, r, g ,b);
-
-            sleep_ms(50);
+            contador++;
+            print_digit(contador, pio, sm);
         }
-        else if(!gpio_get(BTNB_PIN)){
-            //get_led(1,0,0);
-            printf("Botão B on.\n");
-            gpio_put(RLED_PIN, 100);
-            desenho_verde(luz_total, valor_led, pio, sm, r, g ,b);
-
-            sleep_ms(50);
+        else if (!gpio_get(BTNB_PIN)){
+            contador--;
+            print_digit(contador, pio, sm);
         }
-        sleep_ms(5); // Atraso para evitar múltiplas leituras
+        sleep_ms(50); // Atraso para evitar múltiplas leituras
     }
 
     return 0;
