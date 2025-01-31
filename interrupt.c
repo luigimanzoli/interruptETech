@@ -327,7 +327,6 @@ void configurar_pio(PIO pio, uint *offset, uint *sm) {
     interrupt_program_init(pio, *sm, *offset, OUT_PIN);
 }
 
-
 void print_digit(int digit, PIO pio, uint sm){
 
     uint32_t valor_led;
@@ -342,17 +341,24 @@ void print_digit(int digit, PIO pio, uint sm){
     }
 }
 
+PIO pio = pio0;
+uint32_t valor_led;
+uint offset, sm;
+
 void gpio_irq_handler(uint gpio, uint32_t events){
 
-    PIO pio = pio0;
-    uint32_t valor_led;
-    uint offset, sm;
-    configurar_pio(pio, &offset, &sm);
+    if (gpio == BTNA_PIN){
+        contador++;
+        print_digit(contador, pio, sm);
+        printf("Contador = %i\n", contador);
+        sleep_ms(50);
 
-    contador++;
-    print_digit(contador, pio, sm);
-
-    //gpio_put(RLED_PIN, !gpio_get(RLED_PIN));
+    } else if (gpio == BTNB_PIN){
+        contador = contador - 1;
+        print_digit(contador, pio, sm);
+        printf("Contador = %i\n", contador);
+        sleep_ms(50);
+    }
 
 }
 
@@ -363,24 +369,26 @@ int main() {
     init_all();
     inicializar_clock();
 
-    PIO pio = pio0;
-    uint32_t valor_led;
-    uint offset, sm;
     double r = 0.0, b = 0.0, g = 0.0;
 
     configurar_pio(pio, &offset, &sm);
 
     printf("Sistema inicializado. Aguardando entrada...\n");
 
-    //gpio_set_irq_enabled_with_callback(BTNA_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+    // Configuração dos botões como interrupções
+    gpio_set_irq_enabled_with_callback(BTNA_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
+    gpio_set_irq_enabled_with_callback(BTNB_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 
+    // Iniciando o sistema escrevendo 0 na matriz de LEDs
     print_digit(0, pio, sm);
+
+    // Rotina inicial do programa para teste
     gpio_put(RLED_PIN, 1);
     sleep_ms(300);
     gpio_put(RLED_PIN, 0);
-    
 
     while (true) {
+        /*
         if (!gpio_get(BTNA_PIN)){
             contador++;
             print_digit(contador, pio, sm);
@@ -389,7 +397,14 @@ int main() {
             contador--;
             print_digit(contador, pio, sm);
         }
-        sleep_ms(50); // Atraso para evitar múltiplas leituras
+        */
+       // Repetição para que o LED vermelho pisque 5 vezes por segundo.
+       for (int i = 0; i < 5; i++){
+            gpio_put(RLED_PIN, 1);
+            sleep_ms(100);
+            gpio_put(RLED_PIN, 0);
+            sleep_ms(100);
+       }
     }
 
     return 0;
