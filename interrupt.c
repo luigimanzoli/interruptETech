@@ -26,6 +26,8 @@
 #define BTNA_PIN 5
 #define BTNB_PIN 6
 
+int contador = 0;
+
 void init_all() {
     gpio_init(RLED_PIN);
     gpio_set_dir(RLED_PIN, GPIO_OUT);
@@ -53,6 +55,163 @@ void get_led(bool R, bool G, bool B) {
     gpio_put(GLED_PIN, G);
     gpio_put(BLED_PIN, B);
 }
+
+double digit0[25] = {
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0
+};
+
+double digit1[25] = {
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit2[25] = {
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit3[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit4[25] = {
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0
+};
+
+double digit5[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit6[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit7[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0
+};
+
+double digit8[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+};
+
+double digit9[25] = {
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0
+};
+
+// Matriz com todos os dígitos
+
+double digits[10][25] = {
+{ // Digito 0
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0
+},
+{ // Digito 1
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 2
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 3
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 4
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0
+},
+{ // Digito 5
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 6
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 7
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0
+},
+{ // Digito 8
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0
+},
+{ // Digito 9
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 1.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0, 0.0
+}
+
+};
+
 
 //todos apagados
 double desenho_apagado[25] = {
@@ -115,6 +274,7 @@ void desenho_pio(double *desenho, uint32_t valor_led, PIO pio, uint sm, double r
         valor_led = matrix_rgb(0.0, desenho[24 - i], 0.0); // Apenas o valor vermelho está ativo
         pio_sm_put_blocking(pio, sm, valor_led); // Envia o valor para o LED
     }
+
 }
 void desenho_apagado_total(double *desenho, uint32_t valor_led, PIO pio, uint sm, double r, double g, double b){
 
@@ -167,6 +327,28 @@ void configurar_pio(PIO pio, uint *offset, uint *sm) {
     interrupt_program_init(pio, *sm, *offset, OUT_PIN);
 }
 
+
+void print_digit(int digit, uint32_t valor_led, PIO pio, uint sm){
+    if (digit < 9){
+        for (int16_t i = 0; i < NUM_PIXELS; i++) {
+            // Define a cor vermelha para cada LED
+            valor_led = matrix_rgb(0.0, digits[digit][24 - i], 0.0); // Apenas o valor vermelho está ativo
+            pio_sm_put_blocking(pio, sm, valor_led); // Envia o valor para o LED
+        }
+    } else{
+        printf("Valor incompatível.\n");
+    }
+}
+
+void gpio_irq_handler(uint gpio, uint32_t events){
+    //contador++;
+    //print_digit(contador);
+
+    gpio_put(RLED_PIN, !gpio_get(RLED_PIN));
+
+}
+
+
 // Função principal
 int main() {
     // Inicializa clock, stdio e configurações
@@ -182,6 +364,8 @@ int main() {
     configurar_pio(pio, &offset, &sm);
 
     printf("Sistema inicializado. Aguardando entrada...\n");
+
+    gpio_set_irq_enabled_with_callback(BTNA_PIN, GPIO_IRQ_EDGE_FALL, true, &gpio_irq_handler);
 
     desenho_verde(luz_total, valor_led, pio, sm, r, g ,b);
 
