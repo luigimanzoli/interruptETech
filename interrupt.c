@@ -341,8 +341,12 @@ void print_digit(int digit, PIO pio, uint sm){
             valor_led = matrix_rgb(0.0, 0.1*(digits[digit][24 - i]), 0.0); // Apenas o valor vermelho está ativo
             pio_sm_put_blocking(pio, sm, valor_led); // Envia o valor para o LED
         }
-    } else {
+    } else if (digit < 0) {
         printf("Valor incompatível.\n");
+        contador = 0;
+    } else if (digit > 9){
+        printf("Valor incompatível.\n");
+        contador = 9;
     }
 }
 
