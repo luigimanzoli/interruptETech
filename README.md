@@ -49,4 +49,4 @@ Neste projeto, são utilizados os seguintes componentes conectados à placa BitD
 </table>
 
 ## Demonstração: 
-- 
+- https://youtu.be/vsd4MC-O2Lg
